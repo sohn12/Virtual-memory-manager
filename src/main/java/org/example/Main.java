@@ -1,7 +1,15 @@
 package org.example;
 
-
 public class Main {
+
+    private static void printSumTiming(Process p) throws Exception {
+        long startTime = System.nanoTime();
+        int ans = p.sum("x", "y");
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime)/1000000;
+        System.out.println("The sum is: " + ans + ", Time taken: " + duration);
+    }
     public static void main(String[] args) {
 
         // 1. supports only int variables
@@ -14,30 +22,15 @@ public class Main {
             Process p = cpu.addProcess(4);
             p.assign("x", 22);
             p.assign("y", 23);
-            long startTime1 = System.nanoTime();
-            int ans = p.sum("x", "y");
-            long endTime1 = System.nanoTime();
 
-            long duration1 = (endTime1 - startTime1)/1000000;
-            System.out.println("The sum is: " + ans + ", Time taken: " + duration1);
+            printSumTiming(p);
 
             cpu.doCaching(); // cache the variables in cpu
 
-            long startTime2 = System.nanoTime();
-            ans = p.sum("x", "y");
-            long endTime2 = System.nanoTime();
-
-            long duration2 = (endTime2 - startTime2)/1000000;
-            System.out.println("The sum is: " + ans + ", Time taken: " + duration2);
-
-            long startTime3 = System.nanoTime();
-            ans = p.sum("x", "y");
-            long endTime3 = System.nanoTime();
-
-            long duration3 = (endTime3 - startTime3)/1000000;
-            System.out.println("The sum is: " + ans + ", Time taken: " + duration3);
+            printSumTiming(p);
+            printSumTiming(p);
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Exception occurred");
         }
 
 

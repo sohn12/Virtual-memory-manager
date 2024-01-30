@@ -17,6 +17,12 @@ public class MemoryManager {
         }
     }
 
+    private int generateProcessId() {
+        int min = 10000;
+        int max = 99999;
+        return (int) (Math.random() * (max - min + 1) + min);
+    }
+
     public int getFrameNumber(int page) {
         mmuDelay();
         return addressLookup.get(page);
@@ -26,14 +32,9 @@ public class MemoryManager {
         if(requiredMemory > availableMemory) {
             throw new Exception("not enough memory");
         }
-        int min = 10000;
-        int max = 99999;
-        int processId = (int) (Math.random() * (max - min + 1) + min);
-        try {
-            addressLookup.put(processId, 0);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        int processId = generateProcessId();
+        addressLookup.put(processId, 0);
         availableMemory-= requiredMemory;
         return processId;
     }
@@ -41,7 +42,6 @@ public class MemoryManager {
     public static MemoryManager getInstance() {
         if(memoryManager == null) {
             memoryManager = new MemoryManager();
-            return memoryManager;
         }
         return memoryManager;
     }
