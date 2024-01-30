@@ -21,12 +21,21 @@ public class Main {
             long duration1 = (endTime1 - startTime1)/1000000;
             System.out.println("The sum is: " + ans + ", Time taken: " + duration1);
 
+            cpu.doCaching(); // cache the variables in cpu
+
             long startTime2 = System.nanoTime();
             ans = p.sum("x", "y");
             long endTime2 = System.nanoTime();
 
             long duration2 = (endTime2 - startTime2)/1000000;
             System.out.println("The sum is: " + ans + ", Time taken: " + duration2);
+
+            long startTime3 = System.nanoTime();
+            ans = p.sum("x", "y");
+            long endTime3 = System.nanoTime();
+
+            long duration3 = (endTime3 - startTime3)/1000000;
+            System.out.println("The sum is: " + ans + ", Time taken: " + duration3);
         } catch (Exception e) {
             System.out.println(e);
         }

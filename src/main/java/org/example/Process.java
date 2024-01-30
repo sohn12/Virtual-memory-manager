@@ -14,9 +14,6 @@ public class Process {
         this.cpu = cpu;
         this.processId = processId;
     }
-    public int getProcessId() {
-        return processId;
-    }
 
     private int getVariableValue(String a) throws Exception {
         int idx = variables.getOrDefault(a, -1);
@@ -27,14 +24,14 @@ public class Process {
     }
 
 
-    public boolean assign(String variable, int value) throws Exception {
+    public void assign(String variable, int value) throws Exception {
         if (variables.getOrDefault(variable, -1) == -1) {
             if (variables.size() == 4) {
                 throw new RuntimeException("Memory is full");
             }
             variables.put(variable, variables.size());
         }
-        return cpu.addValue(processId, variables.get(variable), value);
+        cpu.addValue(processId, variables.get(variable), value);
     }
 
     public int sum(String a, String b) throws Exception {

@@ -7,6 +7,8 @@ public class Cpu {
     private final Map<Integer, Integer> tlb = new HashMap<>();
 
     private final MemoryManager mmu;
+    private boolean doCache = false;
+    private final Map<Integer, Integer> cache = new HashMap<>();
 
     private final RAM ram;
     private static Cpu cpu = null;
@@ -14,6 +16,10 @@ public class Cpu {
     private Cpu(RAM ram, MemoryManager mmu) {
         this.ram = ram;
         this.mmu = mmu;
+    }
+
+    public void doCaching() {
+        doCache = true;
     }
 
     public Process addProcess(int requiredMemory) throws Exception {
@@ -33,7 +39,15 @@ public class Cpu {
         } else {
             System.out.println("tlb hit");
         }
-        return ram.getValueFromRam(new MemoryLocation(frame, mem));
+        if(cache.containsKey(frame+mem)) {
+            return cache.get(frame+mem);
+        }
+
+        int value = ram.getValueFromRam(new MemoryLocation(frame, mem));
+        if (doCache) {
+            cache.put(frame + mem, value);
+        }
+        return value;
     }
 
     public static Cpu getInstance() {
