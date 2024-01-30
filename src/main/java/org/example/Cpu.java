@@ -21,7 +21,7 @@ public class Cpu {
     }
 
     public boolean addValue(int processId, int mem, int value) throws Exception {
-        return ram.addValueToRam(new Memory(mmu.getFrameNumber(processId), mem), value);
+        return ram.addValueToRam(new MemoryLocation(mmu.getFrameNumber(processId), mem), value);
     }
 
     public int getValue(int processId, int mem) throws Exception {
@@ -33,7 +33,7 @@ public class Cpu {
         } else {
             System.out.println("tlb hit");
         }
-        return ram.getValueFromRam(new Memory(frame, mem));
+        return ram.getValueFromRam(new MemoryLocation(frame, mem));
     }
 
     public static Cpu getInstance() {

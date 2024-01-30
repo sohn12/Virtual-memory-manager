@@ -1,8 +1,5 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class RAM {
     private final int[] memory = new int[32];
 
@@ -27,9 +24,9 @@ public class RAM {
         return ram;
     }
 
-    public boolean addValueToRam(Memory mem, int value) throws Exception {
+    public boolean addValueToRam(MemoryLocation mem, int value) throws Exception {
         ramDelay();
-        int location =  mem.getBase() + mem.getLocation();
+        int location =  mem.base() + mem.location();
         if(location >= 0 && location < 32) {
             memory[location] = value;
             return true;
@@ -37,9 +34,9 @@ public class RAM {
         return false;
     }
 
-    public int getValueFromRam(Memory mem) throws Exception {
+    public int getValueFromRam(MemoryLocation mem) throws Exception {
         ramDelay();
-        int location =  mem.getBase() + mem.getLocation();
+        int location =  mem.base() + mem.location();
         if(location >= 0 && location < 32) {
             return memory[location];
         }
