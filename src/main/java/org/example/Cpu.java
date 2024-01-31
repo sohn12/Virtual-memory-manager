@@ -40,6 +40,7 @@ public class Cpu {
         if(activeProcesses.contains(process.getProcessId())) {
             activeProcesses.remove(process.getProcessId());
             mmu.killProcess(process);
+            process.terminateProcess();
         }
     }
 

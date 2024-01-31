@@ -5,7 +5,7 @@ public class Main {
 
         // 1. supports only int variables
         // 2. a process will have fixed memory
-        // 3. the corresponding frame is contiguous in memory
+        // 3. the frames will be contiguous in memory
 
         Cpu cpu = Cpu.getInstance();
         try {
@@ -20,8 +20,6 @@ public class Main {
             printSumTiming(p, "x", "y");
             printSumTiming(p, "x", "y");
 
-//            cpu.killProcess(p);
-
 //            Process p1 = cpu.addProcess(8);
 //            p1.assign("abc" , 2200);
 //            p1.assign("xyz", 33567);
@@ -29,7 +27,7 @@ public class Main {
 //            System.out.println(p1.sum("abc", "xyz"));
             cpu.printRam();
         } catch (Exception e) {
-            System.out.println("Exception occurred");
+            System.out.println(e);
         }
     }
     private static void printSumTiming(Process p, String a, String b) throws Exception {
@@ -38,6 +36,6 @@ public class Main {
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime)/1000000;
-        System.out.println("The sum is: " + ans + ", Time taken: " + duration);
+        System.out.println("The sum is: " + ans + ", Time taken: " + duration + "ms");
     }
 }
