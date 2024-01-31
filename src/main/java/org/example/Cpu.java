@@ -1,7 +1,9 @@
 package org.example;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Cpu {
     private final Map<Integer, Integer> tlb = new HashMap<>();
@@ -9,6 +11,8 @@ public class Cpu {
     private final MemoryManager mmu;
     private boolean doCache = false;
     private final Map<Integer, Integer> cache = new HashMap<>();
+
+    private Set<Integer> activeProcesses = new HashSet<>();
 
     private final RAM ram;
     private static Cpu cpu = null;
@@ -18,16 +22,29 @@ public class Cpu {
         this.mmu = mmu;
     }
 
+    public void printRam() {
+        ram.printRam();
+    }
+
     public void doCaching() {
         doCache = true;
     }
 
     public Process addProcess(int requiredMemory) throws Exception {
-        return new Process(this, mmu.addProcess(requiredMemory));
+        Process p = new Process(this, mmu.addProcess(requiredMemory), requiredMemory);
+        activeProcesses.add(p.getProcessId());
+        return p;
     }
 
-    public boolean addValue(int processId, int mem, int value) throws Exception {
-        return ram.addValueToRam(new MemoryLocation(mmu.getFrameNumber(processId), mem), value);
+    public void killProcess(Process process) {
+        if(activeProcesses.contains(process.getProcessId())) {
+            activeProcesses.remove(process.getProcessId());
+            mmu.killProcess(process);
+        }
+    }
+
+    public void addValue(int processId, int mem, int value) throws Exception {
+        ram.addValueToRam(new MemoryLocation(mmu.getFrameNumber(processId), mem), value);
     }
 
     public int getValue(int processId, int mem) throws Exception {
@@ -40,8 +57,10 @@ public class Cpu {
             System.out.println("tlb hit");
         }
         if(cache.containsKey(frame+mem)) {
+            System.out.println("reading from cache");
             return cache.get(frame+mem);
         }
+        System.out.println("reading from memory");
 
         int value = ram.getValueFromRam(new MemoryLocation(frame, mem));
         if (doCache) {

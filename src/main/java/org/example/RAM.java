@@ -1,9 +1,15 @@
 package org.example;
 
+import java.util.Arrays;
+
 public class RAM {
     private final int[] memory = new int[32];
 
     private static RAM ram;
+
+    public void printRam() {
+        System.out.println(Arrays.toString(memory));
+    }
 
     private void ramDelay() {
         try {
