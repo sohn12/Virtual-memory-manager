@@ -4,9 +4,7 @@ import java.util.Arrays;
 
 public class RAM {
     private final int[] memory = new int[32];
-
     private static RAM ram;
-
     public void printRam() {
         System.out.println(Arrays.toString(memory));
     }
@@ -18,7 +16,6 @@ public class RAM {
             throw new RuntimeException(e);
         }
     }
-
     private RAM() {
 
     }
@@ -30,7 +27,7 @@ public class RAM {
         return ram;
     }
 
-    public void addValueToRam(MemoryLocation mem, int value) throws Exception {
+    public void addValueToRam(MemoryLocation mem, int value){
         ramDelay();
         int location =  mem.base() + mem.location();
         if(location >= 0 && location < 32) {
@@ -46,5 +43,4 @@ public class RAM {
         }
         throw new Exception("index out of bounds");
     }
-
 }

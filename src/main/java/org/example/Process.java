@@ -5,11 +5,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Process {
-
     private final int processId;
     private final int memorySize;
     private final Cpu cpu;
-
     private String status = "new";
 
     private final Map<String, Integer> variables = new HashMap<>();
@@ -23,11 +21,9 @@ public class Process {
     public void terminateProcess() {
         this.status = "terminated";
     }
-
     public int getProcessId() {
         return processId;
     }
-
     public int getMemorySize() {
         return memorySize;
     }
@@ -39,7 +35,6 @@ public class Process {
         }
         return cpu.getValue(processId, idx);
     }
-
 
     public void assign(String variable, int value) throws Exception {
         if(Objects.equals(status, "terminated")) {

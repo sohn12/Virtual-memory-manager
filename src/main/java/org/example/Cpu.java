@@ -7,13 +7,10 @@ import java.util.Set;
 
 public class Cpu {
     private final Map<Integer, Integer> tlb = new HashMap<>();
-
     private final MemoryManager mmu;
     private boolean doCache = false;
     private final Map<Integer, Integer> cache = new HashMap<>();
-
     private final Set<Integer> activeProcesses = new HashSet<>();
-
     private final RAM ram;
     private static Cpu cpu = null;
 
@@ -30,14 +27,28 @@ public class Cpu {
         doCache = true;
     }
 
+    public void doNotCache() {
+        doCache = false;
+        cache.clear();
+    }
+
     public Process addProcess(int requiredMemory) throws Exception {
         Process p = new Process(this, mmu.addProcess(requiredMemory), requiredMemory);
         activeProcesses.add(p.getProcessId());
         return p;
     }
 
+    public void invalidateProcessCache(Process process) {
+        int frameIndex = getFrameIndex(process.getProcessId());
+        int size = process.getMemorySize();
+        for(int i=0; i < frameIndex+size; i++) {
+            cache.remove(frameIndex+i);
+        }
+    }
+
     public void killProcess(Process process) {
         if(activeProcesses.contains(process.getProcessId())) {
+            invalidateProcessCache(process);
             activeProcesses.remove(process.getProcessId());
             mmu.killProcess(process);
             process.terminateProcess();
@@ -48,7 +59,7 @@ public class Cpu {
         ram.addValueToRam(new MemoryLocation(mmu.getFrameNumber(processId), mem), value);
     }
 
-    public int getValue(int processId, int mem) throws Exception {
+    private int getFrameIndex(int processId) {
         int frame = tlb.getOrDefault(processId, -1);
         if(frame == -1) {
             System.out.println("tlb miss");
@@ -57,6 +68,11 @@ public class Cpu {
         } else {
             System.out.println("tlb hit");
         }
+        return frame;
+    }
+
+    public int getValue(int processId, int mem) throws Exception {
+        int frame = getFrameIndex(processId);
         if(cache.containsKey(frame+mem)) {
             System.out.println("reading from cache");
             return cache.get(frame+mem);
@@ -76,5 +92,4 @@ public class Cpu {
         }
         return cpu;
     }
-
 }

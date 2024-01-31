@@ -5,10 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryManager {
-
+    private static final int PAGE_SIZE = 4;
     private static MemoryManager memoryManager = null;
-    private final Map<Integer, Integer> addressLookup = new HashMap<>();
+    private final Map<Integer, Integer> pageTable = new HashMap<>();
     private final boolean[] availableFrames = new boolean[8]; // 32 integers space in RAM
+
+    private int getFramesFromSize(int size) {
+        return (int) Math.ceil((double) size / PAGE_SIZE);
+    }
+
+    private int getMaxSizeFromFrames(int frames) {
+        return frames * PAGE_SIZE;
+    }
 
     private MemoryManager() {
         Arrays.fill(availableFrames, Boolean.TRUE);
@@ -24,9 +32,9 @@ public class MemoryManager {
     }
 
     private void allocateMemoryToProcess(int processId, int frameIndex, int size) {
-        int framesNeeded = size / 4;
+        int framesNeeded = getFramesFromSize(size);
         if (hasEnoughMemory(frameIndex, framesNeeded)) {
-            addressLookup.put(processId, frameIndex*4);
+            pageTable.put(processId, frameIndex*PAGE_SIZE);
             for(int i = 0; i < framesNeeded && frameIndex + i < availableFrames.length; i++) {
                 availableFrames[frameIndex + i] = false;
             }
@@ -35,13 +43,13 @@ public class MemoryManager {
     }
 
     private void deallocateMemoryOfTheProcess(Process process, int frameIndex) {
-        int size = process.getMemorySize() / 4;
+        int frames = getFramesFromSize(process.getMemorySize());
         int i = 0;
-        while(i < size && (frameIndex + i) < availableFrames.length) {
+        while(i < frames && (frameIndex + i) < availableFrames.length) {
             availableFrames[frameIndex + i] = true;
             i++;
         }
-        addressLookup.remove(process.getProcessId());
+        pageTable.remove(process.getProcessId());
     }
     private int getAvailableFrameIndex() throws Exception {
         int idx = 0;
@@ -70,17 +78,16 @@ public class MemoryManager {
 
     public int getFrameNumber(int page) {
         mmuDelay();
-        return addressLookup.get(page);
+        return pageTable.get(page);
     }
 
-
     public void killProcess(Process process) {
-        int frameIndex = addressLookup.getOrDefault(process.getProcessId(), -1);
-        if(frameIndex == -1) {
+        int frameIndexInRam = pageTable.getOrDefault(process.getProcessId(), -1);
+        if(frameIndexInRam == -1) {
             return;
         }
 
-        deallocateMemoryOfTheProcess(process, frameIndex/4);
+        deallocateMemoryOfTheProcess(process, frameIndexInRam/PAGE_SIZE);
     }
 
     public int addProcess(int requiredMemory) throws Exception {
