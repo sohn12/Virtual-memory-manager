@@ -20,11 +20,13 @@ public class Main {
             printSumTiming(p, "x", "y");
             printSumTiming(p, "x", "y");
 
-            Process p1 = cpu.addProcess(8);
-            p1.assign("abc" , 2200);
-            p1.assign("xyz", 33567);
+//            cpu.killProcess(p);
 
-            System.out.println(p1.sum("abc", "xyz"));
+//            Process p1 = cpu.addProcess(8);
+//            p1.assign("abc" , 2200);
+//            p1.assign("xyz", 33567);
+//
+//            System.out.println(p1.sum("abc", "xyz"));
             cpu.printRam();
         } catch (Exception e) {
             System.out.println("Exception occurred");

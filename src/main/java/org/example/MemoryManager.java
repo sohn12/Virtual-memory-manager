@@ -52,7 +52,7 @@ public class MemoryManager {
             idx++;
         }
         throw new Exception("Out of memory");
-    };
+    }
 
     private void mmuDelay() {
         try {

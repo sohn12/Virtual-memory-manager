@@ -12,7 +12,7 @@ public class Cpu {
     private boolean doCache = false;
     private final Map<Integer, Integer> cache = new HashMap<>();
 
-    private Set<Integer> activeProcesses = new HashSet<>();
+    private final Set<Integer> activeProcesses = new HashSet<>();
 
     private final RAM ram;
     private static Cpu cpu = null;

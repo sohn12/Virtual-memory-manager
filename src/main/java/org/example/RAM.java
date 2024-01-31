@@ -30,14 +30,12 @@ public class RAM {
         return ram;
     }
 
-    public boolean addValueToRam(MemoryLocation mem, int value) throws Exception {
+    public void addValueToRam(MemoryLocation mem, int value) throws Exception {
         ramDelay();
         int location =  mem.base() + mem.location();
         if(location >= 0 && location < 32) {
             memory[location] = value;
-            return true;
         }
-        return false;
     }
 
     public int getValueFromRam(MemoryLocation mem) throws Exception {
