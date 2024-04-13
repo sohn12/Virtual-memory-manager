@@ -44,13 +44,15 @@ public class MemoryManager {
         return availableFramesFromIndex >= frames;
     }
 
-    private void allocateMemoryToProcess(int processId, int frameIndex, int size) {
+    private void allocateMemoryToProcess(int processId, int frameIndex, int size) throws Exception {
         int framesNeeded = getFramesFromSize(size);
         if (hasEnoughMemory(frameIndex, framesNeeded)) {
             pageTable.put(processId, frameIndex*PAGE_SIZE);
             for(int i = 0; i < framesNeeded && frameIndex + i < availableFrames.length; i++) {
                 availableFrames[frameIndex + i] = false;
             }
+        } else {
+            throw new Exception("Out of memory");
         }
     }
 
@@ -88,12 +90,15 @@ public class MemoryManager {
         return (int) (Math.random() * (max - min + 1) + min);
     }
 
-    public int getFrameNumber(int page) {
+    public int getFrameNumber(int processId) {
         mmuDelay();
-        return pageTable.get(page);
+        if(!pageTable.containsKey(processId)) {
+            System.out.println("reading failed for: " + processId);
+        }
+        return pageTable.get(processId);
     }
 
-    public void killProcess(Process process) {
+    public void terminateProcess(Process process) {
         int frameIndexInRam = pageTable.getOrDefault(process.getProcessId(), -1);
         if(frameIndexInRam == -1) {
             return;

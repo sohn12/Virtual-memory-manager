@@ -16,11 +16,21 @@ public class RAM {
         }
     }
 
+    public void clearValue(int base, int size) {
+        for(int i=0; i<size; i++) {
+            if(base + i >= 0 && base + i < Constants.RAM_SIZE) {
+                memory[base + i] = 0;
+            }
+        }
+    }
+
     public void addValueToRam(MemoryLocation mem, int value){
         ramDelay();
-        int location =  mem.base() + mem.offset();
+        int location = mem.base() + mem.offset();
         if(location >= 0 && location < Constants.RAM_SIZE) {
             memory[location] = value;
+        } else {
+            System.out.println("trying to write outside memory");
         }
     }
 

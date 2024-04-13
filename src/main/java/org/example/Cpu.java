@@ -17,6 +17,10 @@ public class Cpu {
         cache = new LRUMap(cacheLimit);
     }
 
+    public Cpu() {
+        this(16, 16);
+    }
+
     public void printRam() {
         ram.printRam();
     }
@@ -52,7 +56,8 @@ public class Cpu {
         if(activeProcesses.contains(process.getProcessId())) {
             invalidateProcessCache(process);
             activeProcesses.remove(process.getProcessId());
-            mmu.killProcess(process);
+            ram.clearValue(mmu.getFrameNumber(process.getProcessId()), process.getMemorySize());
+            mmu.terminateProcess(process);
             process.terminate();
         }
     }
@@ -64,13 +69,11 @@ public class Cpu {
     private int getFrameIndex(int processId) {
         int frame = tlb.getOrDefault(processId, -1);
         if(frame == -1) {
-//            System.out.println("tlb miss");
-            ProfilerStatistics.tlbMisses++;
+            ProfilerStatistics.incrementTlbMisses();
             frame = mmu.getFrameNumber(processId);
             tlb.put(processId, frame);
         } else {
-            ProfilerStatistics.tlbHits++;
-//            System.out.println("tlb hit");
+            ProfilerStatistics.incrementTlbHits();
         }
         return frame;
     }
@@ -78,13 +81,11 @@ public class Cpu {
     public int getValue(int processId, int mem) throws Exception {
         int frame = getFrameIndex(processId);
         if(cache.containsKey(frame+mem)) {
-            ProfilerStatistics.cacheHits++;
-//            System.out.println("reading from cache");
+            ProfilerStatistics.incrementCacheHits();
             return cache.get(frame+mem);
         }
 
-        ProfilerStatistics.cacheMisses++;
-//        System.out.println("reading from memory");
+        ProfilerStatistics.incrementCacheMisses();
         int value = ram.getValueFromRam(new MemoryLocation(frame, mem));
         if (doCache) {
             cache.put(frame + mem, value);
