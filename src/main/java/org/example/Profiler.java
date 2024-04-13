@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Profiler {
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 100;
     private static final int BOUND = 10000;
     private final String[] variables;
     private final List<Process> processes;
@@ -24,8 +24,6 @@ public class Profiler {
             if(!processToExecute.isEqual("sum", sumOfStoredValues)) {
                 throw new Exception("Process returned incorrect results");
             }
-        } else {
-//            System.out.println("No active processes to terminate.");
         }
     }
 

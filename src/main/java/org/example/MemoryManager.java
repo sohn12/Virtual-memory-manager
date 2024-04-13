@@ -71,7 +71,6 @@ public class MemoryManager {
                 while(i < availableFrames.length && availableFrames[i++]) {
                     if(++consecutiveFrames >= frames) return idx;
                 }
-                System.out.println("consecutive: " + consecutiveFrames);
             }
         }
         throw new Exception("Out of memory");
