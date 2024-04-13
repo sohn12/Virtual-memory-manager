@@ -1,5 +1,4 @@
 package org.example;
-
 public class Main {
     public static void main(String[] args) {
 
@@ -13,24 +12,32 @@ public class Main {
         // 3. Kill process and reallocate memory
         // 4. Caching and invalidating the cache
 
-
-        // 1. Limit the TLB
-        // 2. Increase the RAM size
-        // 3. Add a class to randomly create processes and variables
-        // 4. Performance reporting
-
-
-//        Cpu cpu = Cpu.getInstance();
-        Profiler profiler = new Profiler();
-
         try {
-            profiler.run(true);
+            Cpu cpu = new Cpu(8, 16);
+            Profiler profiler = new Profiler(cpu);
+            System.out.println("With limit TLB limit 8: ");
+            long delay = profiler.run(true);
+            System.out.println("Time taken with caching enabled: " + delay + "ms");
+
+            delay = profiler.run(false);
+            System.out.println("Time taken without caching enabled: " + delay + "ms");
+
+            cpu = new Cpu(16, 16);
+            System.out.println("With TLB limit 16: ");
+
+            profiler = new Profiler(cpu);
+            delay = profiler.run(true);
+            System.out.println("Time taken with caching enabled: " + delay + "ms");
+
+            delay = profiler.run(false);
+            System.out.println("Time taken without caching enabled: " + delay + "ms");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
 
 //        try {
+//            Cpu cpu = new Cpu(16, 16);
 //            Process p = cpu.addProcess(18);
 //            p.assign("a", 12);
 //            p.assign("b", 13);

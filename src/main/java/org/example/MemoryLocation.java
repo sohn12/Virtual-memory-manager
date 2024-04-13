@@ -1,4 +1,4 @@
 package org.example;
 
-public record MemoryLocation(int base, int location) {
+public record MemoryLocation(int base, int offset) {
 }

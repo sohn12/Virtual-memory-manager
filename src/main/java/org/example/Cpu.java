@@ -3,17 +3,18 @@ package org.example;
 import java.util.*;
 
 public class Cpu {
-    private final LRUMap tlb = new LRUMap(Constants.TLB_LIMIT);
+    private final LRUMap tlb;
     private final MemoryManager mmu;
     private boolean doCache = false;
-    private final LRUMap cache = new LRUMap(Constants.CACHE_LIMIT);
+    private final LRUMap cache;
     private final Set<Integer> activeProcesses = new HashSet<>();
     private final RAM ram;
-    private static Cpu cpu = null;
 
-    private Cpu(RAM ram, MemoryManager mmu) {
-        this.ram = ram;
-        this.mmu = mmu;
+    public Cpu(int tlbLimit, int cacheLimit) {
+        this.ram = new RAM();
+        this.mmu = new MemoryManager();
+        tlb = new LRUMap(tlbLimit);
+        cache = new LRUMap(cacheLimit);
     }
 
     public void printRam() {
@@ -63,11 +64,13 @@ public class Cpu {
     private int getFrameIndex(int processId) {
         int frame = tlb.getOrDefault(processId, -1);
         if(frame == -1) {
-            System.out.println("tlb miss");
+//            System.out.println("tlb miss");
+            ProfilerStatistics.tlbMisses++;
             frame = mmu.getFrameNumber(processId);
             tlb.put(processId, frame);
         } else {
-            System.out.println("tlb hit");
+            ProfilerStatistics.tlbHits++;
+//            System.out.println("tlb hit");
         }
         return frame;
     }
@@ -75,22 +78,17 @@ public class Cpu {
     public int getValue(int processId, int mem) throws Exception {
         int frame = getFrameIndex(processId);
         if(cache.containsKey(frame+mem)) {
-            System.out.println("reading from cache");
+            ProfilerStatistics.cacheHits++;
+//            System.out.println("reading from cache");
             return cache.get(frame+mem);
         }
 
-        System.out.println("reading from memory");
+        ProfilerStatistics.cacheMisses++;
+//        System.out.println("reading from memory");
         int value = ram.getValueFromRam(new MemoryLocation(frame, mem));
         if (doCache) {
             cache.put(frame + mem, value);
         }
         return value;
-    }
-
-    public static Cpu getInstance() {
-        if(cpu == null) {
-            cpu = new Cpu(RAM.getInstance(), MemoryManager.getInstance());
-        }
-        return cpu;
     }
 }

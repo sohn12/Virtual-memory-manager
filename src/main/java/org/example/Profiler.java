@@ -10,8 +10,8 @@ public class Profiler {
     private static final int BOUND = 10000;
     private final List<Process> processes;
     private final Cpu cpu;
-    public Profiler() {
-        this.cpu = Cpu.getInstance();
+    public Profiler(Cpu cpu) {
+        this.cpu = cpu;
         processes = new ArrayList<>();
     }
 
@@ -22,7 +22,7 @@ public class Profiler {
             try {
                 int sum = processToExecute.sum("a", "b", "c","d");
                 if(processToExecute.isEqual("e", sum)) {
-                    System.out.println("Process executed successfully");
+//                    System.out.println("Process executed successfully");
                 } else {
                     System.out.println("Process returned incorrect results");
                 }
@@ -31,7 +31,7 @@ public class Profiler {
 //                throw new RuntimeException(e);
             }
         } else {
-            System.out.println("No active processes to terminate.");
+//            System.out.println("No active processes to terminate.");
         }
     }
 
@@ -42,10 +42,11 @@ public class Profiler {
             processes.remove(randomIndex);
             cpu.terminateProcess(processToTerminate);
         } else {
-            System.out.println("No active processes to terminate.");
+//            System.out.println("No active processes to terminate.");
         }
     }
-    public int run(boolean doCache) throws Exception {
+    public long run(boolean doCache) throws Exception {
+        ProfilerStatistics.clear();
         if(doCache) cpu.doCaching();
         else cpu.doNotCache();
         long startTime = System.nanoTime();
@@ -71,7 +72,7 @@ public class Profiler {
             executeRandomProcess();
             terminateRandomProcess();
         }
-
-        return (int)(System.nanoTime() - startTime)/1000000;
+        ProfilerStatistics.print();
+        return (System.nanoTime() - startTime)/1000000;
     }
 }

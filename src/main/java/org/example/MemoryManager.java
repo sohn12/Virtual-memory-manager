@@ -6,9 +6,8 @@ import java.util.Map;
 
 public class MemoryManager {
     private static final int PAGE_SIZE = Constants.PAGE_SIZE;
-    private static MemoryManager memoryManager = null;
-    private final Map<Integer, Integer> pageTable = new HashMap<>();
-    private final boolean[] availableFrames = new boolean[Constants.TOTAL_PAGES];
+    private final Map<Integer, Integer> pageTable;
+    private final boolean[] availableFrames;
 
     private int getFramesFromSize(int size) {
         return (int) Math.ceil((double) size / PAGE_SIZE);
@@ -30,8 +29,10 @@ public class MemoryManager {
         return size;
     }
 
-    private MemoryManager() {
+    public MemoryManager() {
+        availableFrames = new boolean[Constants.TOTAL_PAGES];
         Arrays.fill(availableFrames, Boolean.TRUE);
+        pageTable = new HashMap<>();
     }
 
     private boolean hasEnoughMemory(int frameIndex, int frames) {
@@ -103,14 +104,8 @@ public class MemoryManager {
 
     public int addProcess(int requiredMemory) throws Exception {
         int processId = generateProcessId();
+//        System.out.println("allocating " + getAvailableFrameIndex());
         allocateMemoryToProcess(processId, getAvailableFrameIndex(), requiredMemory);
         return processId;
-    }
-
-    public static MemoryManager getInstance() {
-        if(memoryManager == null) {
-            memoryManager = new MemoryManager();
-        }
-        return memoryManager;
     }
 }
