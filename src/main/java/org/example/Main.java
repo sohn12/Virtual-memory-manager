@@ -1,4 +1,6 @@
 package org.example;
+
+import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
 
@@ -13,7 +15,7 @@ public class Main {
         // 4. Caching and invalidating the cache
 
         try {
-            Cpu cpu = new Cpu(16, 16);
+            Cpu cpu = new Cpu(16, false);
             Profiler profiler = new Profiler(cpu);
             System.out.println("\n With limit TLB limit 16: ");
             long delay = profiler.run(true);
@@ -22,7 +24,7 @@ public class Main {
             delay = profiler.run(false);
             System.out.println("Time taken without caching disabled: " + delay + "ms");
 
-            cpu = new Cpu(32, 16);
+            cpu = new Cpu(32, false);
             System.out.println("\n With TLB limit 32: ");
 
             profiler = new Profiler(cpu);

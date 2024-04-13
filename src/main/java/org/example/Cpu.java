@@ -10,15 +10,15 @@ public class Cpu {
     private final Set<Integer> activeProcesses = new HashSet<>();
     private final RAM ram;
 
-    public Cpu(int tlbLimit, int cacheLimit) {
-        this.ram = new RAM();
+    public Cpu(int tlbLimit, boolean showUI) {
+        this.ram = new RAM(showUI);
         this.mmu = new MemoryManager();
         tlb = new LRUMap(tlbLimit);
-        cache = new LRUMap(cacheLimit);
+        cache = new LRUMap(Constants.CACHE_SIZE);
     }
 
-    public Cpu() {
-        this(16, 16);
+    public Cpu(boolean showUI) {
+        this(16, showUI);
     }
 
     public void printRam() {
@@ -29,8 +29,8 @@ public class Cpu {
         doCache = true;
     }
 
-    public int availableMemory() {
-        return mmu.availableMemory();
+    public boolean isMemoryAvailable(int requiredMemory) {
+        return mmu.isMemoryAvailable(requiredMemory);
     }
 
     public void doNotCache() {

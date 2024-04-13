@@ -17,16 +17,13 @@ public class MemoryManager {
         return frames * PAGE_SIZE;
     }
 
-    public int availableMemory() {
-        int size = 0;
+    public boolean isMemoryAvailable(int requiredMemory) {
         try {
-            int idx = getAvailableFrameIndex();
-            while(availableFrames[idx++]) {
-                size++;
-            }
+            getAvailableFrameIndex(requiredMemory);
         }catch (Exception e) {
+            return false;
         }
-        return size;
+        return true;
     }
 
     public MemoryManager() {
@@ -65,13 +62,17 @@ public class MemoryManager {
         }
         pageTable.remove(process.getProcessId());
     }
-    private int getAvailableFrameIndex() throws Exception {
-        int idx = 0;
-        for(boolean isFrameAvailable: availableFrames) {
-            if(isFrameAvailable) {
-                return idx;
+    private int getAvailableFrameIndex(int size) throws Exception {
+        int frames = getFramesFromSize(size);
+        for(int idx=0; idx<availableFrames.length; idx++) {
+            if(availableFrames[idx]) {
+                int i = idx;
+                int consecutiveFrames = 0;
+                while(i < availableFrames.length && availableFrames[i++]) {
+                    if(++consecutiveFrames >= frames) return idx;
+                }
+                System.out.println("consecutive: " + consecutiveFrames);
             }
-            idx++;
         }
         throw new Exception("Out of memory");
     }
@@ -109,8 +110,7 @@ public class MemoryManager {
 
     public int addProcess(int requiredMemory) throws Exception {
         int processId = generateProcessId();
-//        System.out.println("allocating " + getAvailableFrameIndex());
-        allocateMemoryToProcess(processId, getAvailableFrameIndex(), requiredMemory);
+        allocateMemoryToProcess(processId, getAvailableFrameIndex(requiredMemory), requiredMemory);
         return processId;
     }
 }

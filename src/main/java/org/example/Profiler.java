@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Profiler {
-    private static final int LIMIT = 100;
+    private static final int LIMIT = 5;
     private static final int BOUND = 10000;
     private final String[] variables;
     private final List<Process> processes;
@@ -59,7 +59,7 @@ public class Profiler {
         long startTime = System.nanoTime();
         for(int i=0; i<LIMIT; i++) {
             int requiredMemorySize = (int) ((Math.random() * (7)) + 7);
-            while(cpu.availableMemory() < requiredMemorySize) {
+            while(!cpu.isMemoryAvailable(requiredMemorySize)) {
                 terminateRandomProcess();
             }
             addNewProcess(requiredMemorySize);

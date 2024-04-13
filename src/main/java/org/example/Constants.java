@@ -1,6 +1,7 @@
 package org.example;
 
 public class Constants {
+    static final int CACHE_SIZE = 16;
     static final int RAM_DELAY = 5;
     static final int PAGE_SIZE = 4;
     static final int RAM_SIZE = 256;
