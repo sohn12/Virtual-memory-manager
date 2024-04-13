@@ -1,15 +1,12 @@
 package org.example;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Cpu {
-    private final Map<Integer, Integer> tlb = new HashMap<>();
+    private final LRUMap tlb = new LRUMap(Constants.TLB_LIMIT);
     private final MemoryManager mmu;
     private boolean doCache = false;
-    private final Map<Integer, Integer> cache = new HashMap<>();
+    private final LRUMap cache = new LRUMap(Constants.CACHE_LIMIT);
     private final Set<Integer> activeProcesses = new HashSet<>();
     private final RAM ram;
     private static Cpu cpu = null;
@@ -25,6 +22,10 @@ public class Cpu {
 
     public void doCaching() {
         doCache = true;
+    }
+
+    public int availableMemory() {
+        return mmu.availableMemory();
     }
 
     public void doNotCache() {
@@ -46,12 +47,12 @@ public class Cpu {
         }
     }
 
-    public void killProcess(Process process) {
+    public void terminateProcess(Process process) {
         if(activeProcesses.contains(process.getProcessId())) {
             invalidateProcessCache(process);
             activeProcesses.remove(process.getProcessId());
             mmu.killProcess(process);
-            process.terminateProcess();
+            process.terminate();
         }
     }
 
@@ -77,8 +78,8 @@ public class Cpu {
             System.out.println("reading from cache");
             return cache.get(frame+mem);
         }
-        System.out.println("reading from memory");
 
+        System.out.println("reading from memory");
         int value = ram.getValueFromRam(new MemoryLocation(frame, mem));
         if (doCache) {
             cache.put(frame + mem, value);

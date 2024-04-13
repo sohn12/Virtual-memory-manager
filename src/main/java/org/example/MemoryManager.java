@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryManager {
-    private static final int PAGE_SIZE = 4;
+    private static final int PAGE_SIZE = Constants.PAGE_SIZE;
     private static MemoryManager memoryManager = null;
     private final Map<Integer, Integer> pageTable = new HashMap<>();
-    private final boolean[] availableFrames = new boolean[8]; // 32 integers space in RAM
+    private final boolean[] availableFrames = new boolean[Constants.TOTAL_PAGES];
 
     private int getFramesFromSize(int size) {
         return (int) Math.ceil((double) size / PAGE_SIZE);
@@ -16,6 +16,18 @@ public class MemoryManager {
 
     private int getMaxSizeFromFrames(int frames) {
         return frames * PAGE_SIZE;
+    }
+
+    public int availableMemory() {
+        int size = 0;
+        try {
+            int idx = getAvailableFrameIndex();
+            while(availableFrames[idx++]) {
+                size++;
+            }
+        }catch (Exception e) {
+        }
+        return size;
     }
 
     private MemoryManager() {
@@ -39,7 +51,6 @@ public class MemoryManager {
                 availableFrames[frameIndex + i] = false;
             }
         }
-
     }
 
     private void deallocateMemoryOfTheProcess(Process process, int frameIndex) {
@@ -64,7 +75,7 @@ public class MemoryManager {
 
     private void mmuDelay() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(Constants.MMU_DELAY);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
