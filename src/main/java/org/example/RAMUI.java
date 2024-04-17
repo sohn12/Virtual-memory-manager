@@ -2,6 +2,7 @@ package org.example;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class RAMUI extends JFrame {
@@ -17,13 +18,14 @@ public class RAMUI extends JFrame {
 
         table.getColumnModel().getColumn(0).setPreferredWidth(80);
 
+        table.setDefaultRenderer(Object.class, new CustomCellRenderer());
         setTitle("RAM UI");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        setSize(650, 650);
+        setSize(622, 590);
         setLocationRelativeTo(null); // Center the frame
         setVisible(true);
     }
@@ -33,7 +35,7 @@ public class RAMUI extends JFrame {
     }
 
     private class MyTableModel extends AbstractTableModel {
-        private static final int NUM_COLUMNS = 8; // Number of columns
+        private static final int NUM_COLUMNS = 8;
 
         @Override
         public int getRowCount() {
@@ -59,5 +61,25 @@ public class RAMUI extends JFrame {
             model.fireTableDataChanged();
         }
     }
+
+    private static class CustomCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
+            Component component = super.getTableCellRendererComponent(table, value,
+                    isSelected, hasFocus, row, column);
+
+            // Set background color for even rows
+            if (row % 2 == 0) {
+                component.setBackground(Color.LIGHT_GRAY);
+            } else {
+                component.setBackground(Color.WHITE);
+            }
+
+            return component;
+        }
+    }
+
 
 }

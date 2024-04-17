@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Profiler {
-    private static final int LIMIT = 100;
+    private static final int LIMIT = 50;
     private static final int BOUND = 10000;
     private final String[] variables;
     private final List<Process> processes;

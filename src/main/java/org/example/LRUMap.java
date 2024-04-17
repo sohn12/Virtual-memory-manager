@@ -2,8 +2,7 @@ package org.example;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-public class LRUMap
-{
+public class LRUMap {
     LinkedHashMap<Integer, Integer> m;
     int capacity;
     LRUMap(int capacity){
