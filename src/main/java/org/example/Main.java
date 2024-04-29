@@ -8,20 +8,24 @@ public class Main {
             Profiler profiler = new Profiler(cpu);
             System.out.println("\n With limit TLB limit 16: ");
             long delay = profiler.run(true);
-            System.out.println("Time taken with caching enabled: " + delay + "ms");
+            long EAT = delay/ProfilerStatistics.totalQueries;
+            System.out.println("EAT with caching enabled: " + EAT + "ms");
 
             delay = profiler.run(false);
-            System.out.println("Time taken without caching disabled: " + delay + "ms");
+            EAT = delay/ProfilerStatistics.totalQueries;
+            System.out.println("EAT without caching disabled: " + EAT+ "ms");
 
             cpu = new Cpu(32, true);
             System.out.println("\n With TLB limit 32: ");
 
             profiler = new Profiler(cpu);
             delay = profiler.run(true);
-            System.out.println("Time taken with caching enabled: " + delay + "ms");
+            EAT = delay/ProfilerStatistics.totalQueries;
+            System.out.println("EAT with caching enabled: " + EAT + "ms");
 
             delay = profiler.run(false);
-            System.out.println("Time taken without caching disabled: " + delay + "ms");
+            EAT = delay/ProfilerStatistics.totalQueries;
+            System.out.println("EAT without caching disabled: " + EAT + "ms");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +53,7 @@ public class Main {
             Process p2 = cpu.addProcess(36);
             p2.assign("variable", 220);
 
-//            cpu.terminateProcess(p);
+            cpu.terminateProcess(p);
             Process p3 = cpu.addProcess(2);
 
             p3.assign("variable_1", 34345);

@@ -5,6 +5,7 @@ public class ProfilerStatistics {
     public static int tlbHits = 0;
     public static int cacheMisses = 0;
     public static int cacheHits = 0;
+    public static int totalQueries = 0;
     public static boolean doLog = false;
 
     public static void clear() {
@@ -12,10 +13,14 @@ public class ProfilerStatistics {
         tlbMisses = 0;
         cacheHits = 0;
         cacheMisses = 0;
+        totalQueries = 0;
         doLog = false;
     }
     public static void log(boolean d) {
         doLog = d;
+    }
+    public static void incrementQueryCount() {
+        totalQueries++;
     }
     public static void incrementTlbHits() {
         if(doLog) {
@@ -43,7 +48,7 @@ public class ProfilerStatistics {
     }
 
     public static void print() {
-        String s = "TLB misses: " + tlbMisses + " TLB hits: " + tlbHits + " Cache misses: " + cacheMisses + " Cache hits: " + cacheHits;
+        String s = "TLB misses: " + tlbMisses + " TLB hits: " + tlbHits + " Cache misses: " + cacheMisses + " Cache hits: " + cacheHits + " Total queries: " + totalQueries;
         System.out.println(s);
     }
 }

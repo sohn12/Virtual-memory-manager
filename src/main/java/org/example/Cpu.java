@@ -63,7 +63,8 @@ public class Cpu {
     }
 
     public void addValue(int processId, int mem, int value) throws Exception {
-        ram.addValueToRam(new MemoryLocation(mmu.getFrameNumber(processId), mem), value);
+        ProfilerStatistics.incrementQueryCount();
+        ram.addValueToRam(new MemoryLocation(getFrameIndex(processId), mem), value);
     }
 
     private int getFrameIndex(int processId) {
@@ -79,6 +80,7 @@ public class Cpu {
     }
 
     public int getValue(int processId, int mem) throws Exception {
+        ProfilerStatistics.incrementQueryCount();
         int frame = getFrameIndex(processId);
         if(cache.containsKey(frame+mem)) {
             ProfilerStatistics.incrementCacheHits();
